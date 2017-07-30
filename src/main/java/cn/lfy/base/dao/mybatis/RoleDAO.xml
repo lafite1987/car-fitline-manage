@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.lfy.base.dao.RoleDAO" >
+  <resultMap id="BaseResultMap" type="cn.lfy.base.model.Role" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <id column="parentId" property="parentId" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="parentIdPath" property="parentIdPath" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.name != null" >
+         and name = #{condition.name}
+      </if>
+      <if test="condition.state != null" >
+         and state = #{condition.state}
+      </if>
+      <if test="condition.parentId != null" >
+         and parentId = #{condition.parentId}
+      </if>
+    </trim>
+  </sql>
+  
+   <sql id="Example_Order_Clause">
+  	<trim prefix="order by" prefixOverrides="," >
+  		id DESC
+  	</trim>
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    id, parentId, name, `desc`, state, createTime, `level`, parentIdPath
+  </sql>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.lfy.base.model.Criteria" >
+    select
+    <include refid="Base_Column_List" />
+    from role
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Order_Clause" />
+    </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from role where id = #{id}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from role where id = #{id}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.lfy.base.model.Role" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into role (parentId, name,`desc`, state, level, parentIdPath) values (#{parentId}, #{name}, #{desc}, #{state}, #{level}, #{parentIdPath})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lfy.base.model.Role" >
+    update role
+    <set >
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="desc != null" >
+        `desc` = #{desc},
+      </if>
+      <if test="state != null" >
+        state = #{state},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <select id="getRoles" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from role
+    <if test="list != null and list.size() > 0">
+    	where id in
+    	<foreach collection="list" open="(" item="roleId" separator="," close=")">
+    		#{roleId}
+    	</foreach>
+    </if>
+  </select>
+</mapper>

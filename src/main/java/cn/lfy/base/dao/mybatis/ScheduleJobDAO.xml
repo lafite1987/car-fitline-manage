@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lfy.base.dao.ScheduleJobDAO">
+	
+	<select id="findAllEnabled" resultType="cn.lfy.common.job.model.ScheduleJob">
+		SELECT 
+			FJOBID jobId,
+			FJOB_NAME jobName,
+			FJOB_GROUP jobGroup,
+			FJOB_STATUS jobStatus,
+			FCRON_EXPRESSION  cronExpression,
+			FCONCURRENT concurrent,
+			FDESC 'desc',
+			FOPERATOR operator,
+			FOP_TIME opTime,
+			FIDC idc,
+			FISBOOT isBoot
+		FROM 
+		t_schedule_job
+		WHERE FJOB_STATUS='NORMAL' AND FIDC=#{idc} ORDER BY FJOBID DESC
+	</select>
+	
+	<select id="findAll" resultType="cn.lfy.common.job.model.ScheduleJob">
+		SELECT 
+			FJOBID jobId,
+			FJOB_NAME jobName,
+			FJOB_GROUP jobGroup,
+			FJOB_STATUS jobStatus,
+			FCRON_EXPRESSION  cronExpression,
+			FCONCURRENT concurrent,
+			FDESC 'desc',
+			FOPERATOR operator ,
+			FOP_TIME opTime,
+			FIDC idc,
+			FISBOOT isBoot
+		FROM 
+		t_schedule_job
+		WHERE FIDC=#{idc}
+		ORDER BY FJOBID DESC
+	</select>
+	
+	<select id="loadJobById" resultType="cn.lfy.common.job.model.ScheduleJob">
+		SELECT 
+			FJOBID jobId,
+			FJOB_NAME jobName,
+			FJOB_GROUP jobGroup,
+			FJOB_STATUS jobStatus,
+			FCRON_EXPRESSION  cronExpression,
+			FCONCURRENT concurrent,
+			FDESC 'desc',
+			FOPERATOR operator ,
+			FOP_TIME opTime,
+			FIDC idc,
+			FISBOOT isBoot
+		FROM 
+		t_schedule_job 
+		WHERE FJOBID=#{scheduleJobId}
+	</select>
+	
+	<update id="update" parameterType="cn.lfy.common.job.model.ScheduleJob" >
+		UPDATE t_schedule_job SET
+		<if test="null!=#{job.jobName} and ''!=#{job.jobName}"> FJOB_NAME=#{job.jobName}, </if>
+		<if test="null!=#{job.jobGroup} and ''!=#{job.jobGroup}"> FJOB_GROUP=#{job.jobGroup}, </if>
+		<if test="null!=#{job.jobStatus} and ''!=#{job.jobStatus}"> FJOB_STATUS=#{job.jobStatus}, </if>
+		<if test="job.cronExpression != null" >
+			FCRON_EXPRESSION=#{job.cronExpression},
+		</if>
+		<if test="null!=#{job.concurrent} and ''!=#{job.concurrent}"> FCONCURRENT=#{job.concurrent}, </if>
+		<if test="null!=#{job.desc} and ''!=#{job.desc}"> FDESC=#{job.desc}, </if>
+		FOPERATOR=#{job.operator}, FOP_TIME=#{job.opTime},FIDC=#{job.idc},FISBOOT=#{job.isBoot}
+		WHERE
+		FJOBID=#{job.jobId}
+	</update>
+
+	<update id="updateStatus" parameterType="cn.lfy.common.job.model.ScheduleJob" >
+		UPDATE t_schedule_job SET
+		FJOB_STATUS=#{job.jobStatus},
+		FOPERATOR=#{job.operator}, 
+		FOP_TIME=#{job.opTime} 
+		WHERE
+		FJOBID=#{job.jobId}
+	</update>
+
+	<delete id="delete" >
+		DELETE FROM t_schedule_job WHERE FJOBID=#{scheduleJobId}
+	</delete>
+	
+	<insert id="create" parameterType="cn.lfy.common.job.model.ScheduleJob" >
+		INSERT INTO t_schedule_job (
+		FJOB_NAME, FJOB_GROUP, FJOB_STATUS,
+		FCRON_EXPRESSION,FCONCURRENT,FDESC,
+		FOPERATOR, FOP_TIME,FIDC,FISBOOT
+		)
+		VALUES (
+		#{job.jobName},#{job.jobGroup},#{job.jobStatus},
+		#{job.cronExpression},#{job.concurrent},#{job.desc},
+		#{job.operator},#{job.opTime},#{job.idc},#{job.isBoot}
+		)
+	</insert>
+
+	<select id="countByNameAndGroup" resultType="int">
+		SELECT COUNT(1) 
+		FROM 
+		t_schedule_job 
+		WHERE FJOB_NAME=#{job.jobName} AND FJOB_GROUP=#{job.jobGroup} AND FIDC=#{job.idc}
+		<if test="null!=job.jobId"> AND FJOBID != #{job.jobId} </if>
+	</select>
+
+</mapper>

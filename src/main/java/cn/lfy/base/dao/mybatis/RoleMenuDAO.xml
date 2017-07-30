@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.lfy.base.dao.RoleMenuDAO" >
+  <resultMap id="BaseResultMap" type="cn.lfy.base.model.RoleMenu" >
+    <id column="menuId" property="menuId" jdbcType="BIGINT" />
+    <id column="roleId" property="roleId" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <resultMap id="MenuResultMap" type="cn.lfy.base.model.Menu" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="parentId" property="parentId" jdbcType="INTEGER" />
+    <result column="parentIdPath" property="parentIdPath" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="ownerId" property="ownerId" jdbcType="BIGINT" />
+    <result column="onMenu" property="onMenu" jdbcType="INTEGER" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectMenuListByRoleId" resultMap="MenuResultMap" parameterType="java.lang.Long" >
+    select m.id, m.name, m.parentId, m.parentIdPath, m.url, rm.roleId as ownerId,m.onMenu as onMenu, m.icon as icon 
+    from menu m inner join role_menu rm on m.id = rm.menuId 
+    where m.state = 1 and rm.roleId = #{roleId}
+    order by m.parentIdPath, m.orderNo
+  </select>
+  
+  <select id="selectMenuListByRoleIds" resultMap="MenuResultMap" parameterType="java.lang.Long" >
+    select m.id, m.name, m.parentId, m.parentIdPath, m.url, rm.roleId as ownerId,m.onMenu as onMenu, m.icon as icon 
+    from menu m inner join role_menu rm on m.id = rm.menuId 
+    where m.state = 1 and rm.roleId in
+    <foreach collection="list" separator="," item="roleId" open="(" close=")">
+    	#{roleId}
+    </foreach>
+    group by m.id
+    order by m.parentIdPath, m.orderNo
+  </select>
+  
+  <insert id="insert" parameterType="cn.lfy.base.model.RoleMenu" >
+    insert into role_menu (menuId, roleId) values (#{menuId}, #{roleId})
+  </insert>
+  
+  <delete id="deleteByRoleId" parameterType="java.lang.Long" >
+    delete from role_menu where roleId = #{roleId}
+  </delete>
+  
+  <delete id="deleteByMenuId" parameterType="java.lang.Long" >
+    delete from role_menu where menuId = #{menuId}
+  </delete>
+  
+  <delete id="delete" parameterType="java.lang.Long" >
+    delete from role_menu where roleId = #{roleId} and menuId = #{menuId}
+  </delete>
+</mapper>

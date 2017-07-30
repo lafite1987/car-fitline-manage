@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.lfy.base.dao.UserDAO" >
+  <resultMap id="BaseResultMap" type="cn.lfy.base.model.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <cache flushInterval="1800000" size="1024" readOnly="true" eviction="LRU"></cache>
+  <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.username != null" >
+         and username = #{condition.username}
+      </if>
+      <if test="condition.usernameLike != null" >
+         and username like '%${condition.usernameLike}%'
+      </if>
+      <if test="condition.password != null" >
+         and password = #{condition.password}
+      </if>
+      <if test="condition.nickname != null" >
+         and nickname = #{condition.nickname}
+      </if>
+      <if test="condition.realNameLike != null" >
+         and nickname like '%${condition.nicknameLike}%'
+      </if>
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.phone != null" >
+         and phone = #{condition.phone}
+      </if>
+      <if test="condition.state != null" >
+         and state = #{condition.state}
+      </if>
+    </trim>
+  </sql>
+  
+  <sql id="Example_Order_Clause">
+  	<trim prefix="order by" prefixOverrides="," >
+  		id DESC
+  	</trim>
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    id, username, password, salt, nickname, email, phone, state, createTime
+  </sql>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.lfy.base.model.Criteria" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Order_Clause" />
+    </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user where id = #{id}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user where id = #{id}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.lfy.base.model.User" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user (username, password, salt, nickname, email, phone, state)
+    values (#{username}, #{password}, #{salt}, #{nickname}, #{email}, #{phone}, #{state})
+  </insert>
+  
+  <select id="countByExample" parameterType="cn.lfy.base.model.Criteria" resultType="java.lang.Integer" >
+    select count(*) from user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lfy.base.model.User" >
+    update user
+    <set >
+      <if test="password != null" >
+        password = #{password},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname},
+      </if>
+      <if test="email != null" >
+        email = #{email},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone},
+      </if>
+      <if test="state != null" >
+        state = #{state},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String" useCache="true">
+    select 
+    <include refid="Base_Column_List" />
+    from user where username = #{username} limit 1
+  </select>
+  
+   <select id="listPage" resultMap="BaseResultMap" useCache="true">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+  </select>
+  
+  <select id="list2" resultMap="BaseResultMap" useCache="true">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+  </select>
+  
+  <select id="list3" resultMap="BaseResultMap" useCache="true">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+  </select>
+  
+</mapper>

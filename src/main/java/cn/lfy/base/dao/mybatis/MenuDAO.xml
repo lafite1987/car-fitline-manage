@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.lfy.base.dao.MenuDAO" >
+  <resultMap id="BaseResultMap" type="cn.lfy.base.model.Menu" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="parentId" property="parentId" jdbcType="BIGINT" />
+    <result column="parentIdPath" property="parentIdPath" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="orderNo" property="orderNo" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="onMenu" property="onMenu" jdbcType="INTEGER" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.type != null" >
+         and type = #{condition.type}
+      </if>
+      <if test="condition.parentId != null" >
+         and parentId = #{condition.parentId}
+      </if>
+      <if test="condition.parentIdPath != null" >
+         and parentIdPath = #{condition.parentIdPath}
+      </if>
+      <if test="condition.state != null" >
+         and state = #{condition.state}
+      </if>
+      <if test="condition.onMenu != null" >
+         and onMenu = #{condition.onMenu}
+      </if>
+    </trim>
+  </sql>
+  
+  <sql id="Example_Order_Clause">
+  	<trim prefix="order by" prefixOverrides="," >
+  		parentIdPath,orderNo
+  	</trim>
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    id, name, type, parentId, parentIdPath, url, orderNo, remark, state, createTime, onMenu,icon
+  </sql>
+  
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.lfy.base.model.Criteria" >
+    select
+    <include refid="Base_Column_List" />
+    from menu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="_parameter != null" >
+      <include refid="Example_Order_Clause"/>
+    </if>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from menu where id = #{id}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from menu where id = #{id} or parentId = #{id}
+  </delete>
+  
+  <insert id="insert" parameterType="cn.lfy.base.model.Menu" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into menu (name, type, parentId, parentIdPath, url, orderNo, remark, state, onMenu)
+    values (#{name}, #{type}, #{parentId}, #{parentIdPath}, #{url}, #{orderNo}, #{remark}, #{state}, #{onMenu})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lfy.base.model.Menu" >
+    update menu
+    <set >
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="type != null" >
+        type = #{type},
+      </if>
+      <if test="parentId != null" >
+        parentId = #{parentId},
+      </if>
+      <if test="parentIdPath != null" >
+        parentIdPath = #{parentIdPath},
+      </if>
+      <if test="url != null" >
+        url = #{url},
+      </if>
+      <if test="orderNo != null" >
+        orderNo = #{orderNo},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>
+      <if test="state != null" >
+        state = #{state},
+      </if>
+      <if test="onMenu != null" >
+        onMenu = #{onMenu},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  
+  <update id="updateChildParentPath" parameterType="map">
+    update menu set parentIdPath  = replace(parentIdPath, #{oldParentIdPath}, #{newParentIdPath})
+  </update>
+</mapper>
