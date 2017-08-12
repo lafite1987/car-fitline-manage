@@ -14,6 +14,7 @@ import cn.lfy.base.web.core.UploadBase;
 import cn.lfy.common.model.Message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 /**
  * 通用上传组件<br>
@@ -27,6 +28,7 @@ public class CommonUploadController extends UploadBase {
 
 	@RequestMapping( "/common/upload" )
 	@ResponseBody
+	@ApiOperation(value="上传文件",httpMethod="POST",notes="上传文件到服务器，返回服务器相对路径，用于临时显示") 
 	protected final Object upload( MultipartHttpServletRequest request ) throws IOException {
 		String baseDir = request.getSession().getServletContext().getRealPath( "/upload/" );
 		return Message.newBuilder().data( super.processMultipartFile( request.getFileMap(), baseDir ) );

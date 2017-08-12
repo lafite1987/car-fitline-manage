@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.wordnik.swagger.annotations.ApiOperation;
 
 import cn.lfy.base.model.Criteria;
 import cn.lfy.base.model.LoginUser;
@@ -30,12 +31,12 @@ import cn.lfy.base.service.RoleMenuService;
 import cn.lfy.base.service.RoleService;
 import cn.lfy.common.framework.exception.ApplicationException;
 import cn.lfy.common.framework.exception.ErrorCode;
-import cn.lfy.common.model.Message;
+import cn.lfy.common.model.ResultDTO;
 import cn.lfy.common.utils.RequestUtil;
 import cn.lfy.common.validator.Validators;
 
 @Controller
-@RequestMapping("/manage/role")
+@RequestMapping("/manager/role")
 public class RoleController {
 
     public static final int listPageSize = 20;
@@ -49,14 +50,10 @@ public class RoleController {
     @Autowired
     private RoleMenuService roleMenuService;
 
-    @RequestMapping("/list")
-    public String list(HttpServletRequest request) throws ApplicationException {
-        return "/system/role/role-tree";
-    }
-    
     @RequestMapping("/api/tree")
     @ResponseBody
-    public Object api_tree(HttpServletRequest request, LoginUser account) {
+    @ApiOperation(value = "角色树", httpMethod = "GET", notes = "角色树")
+    public ResultDTO<List<TreeNode>> api_tree(LoginUser account) {
     	List<Role> roleTree = new ArrayList<Role>();
     	Set<Role> roles = account.getRoles();
     	roleTree.addAll(roles);
@@ -79,47 +76,53 @@ public class RoleController {
 		for(TreeNode node1 : treeList){  
 			tree.add(node1);   
 		}
-        Message.Builder builder = Message.newBuilder();
-        builder.data(tree);
-    	return builder.build();
+        ResultDTO<List<TreeNode>> resultDTO = new ResultDTO<>();
+        resultDTO.setData(tree);
+    	return resultDTO;
     }
 
     @RequestMapping("/del")
     @ResponseBody
-    public Object del(HttpServletRequest request) throws ApplicationException {
-        Long id = RequestUtil.getLong(request, "id");
+    @ApiOperation(value = "删除角色", httpMethod = "POST", notes = "删除角色")
+    public ResultDTO<Void> del(Long id) throws ApplicationException {
+    	ResultDTO<Void> resultDTO = new ResultDTO<>();
         Role record = new Role();
         record.setId(id);
         record.setState(StateType.INACTIVE.getId());
         roleService.updateByIdSelective(record);
-        return Message.newBuilder().build();
+        return resultDTO;
     }
 
     @RequestMapping("/detail")
     @ResponseBody
-    public Object detail(HttpServletRequest request) throws ApplicationException {
-    	Message.Builder builder = Message.newBuilder();
+    @ApiOperation(value = "角色信息", httpMethod = "GET", notes = "角色信息")
+    public ResultDTO<Role> detail(HttpServletRequest request) throws ApplicationException {
+    	ResultDTO<Role> resultDTO = new ResultDTO<>();
         Long id = RequestUtil.getLong(request, "id");
         Role role = roleService.getById(id);
-        builder.data(role);
-        return builder.build();
+        resultDTO.setData(role);
+        return resultDTO;
     }
 
     @RequestMapping("/add")
     @ResponseBody
-    public Object add(Role role, HttpServletRequest request) throws ApplicationException {
+    @ApiOperation(value = "添加角色", httpMethod = "POST", notes = "添加角色")
+    public ResultDTO<Void> add(Role role) throws ApplicationException {
+    	ResultDTO<Void> resultDTO = new ResultDTO<>();
         Role parent = roleService.getById(role.getParentId());
         Validators.notNull(parent, ErrorCode.PARAM_ILLEGAL, "parentId");
         role.setLevel(parent.getLevel() + 1);
     	roleService.insert(role);
-        return Message.newBuilder().build();
+        return resultDTO;
     }
 
     @RequestMapping("/update")
     @ResponseBody
-    public Object update(Role role, HttpServletRequest request, HttpServletResponse response) throws ApplicationException {
-        roleService.updateByIdSelective(role);
-        return Message.newBuilder().build();
+    @ApiOperation(value = "更新角色", httpMethod = "POST", notes = "更新角色")
+    public ResultDTO<Void> update(Role role, HttpServletRequest request, HttpServletResponse response) throws ApplicationException {
+    	ResultDTO<Void> resultDTO = new ResultDTO<>();
+    	roleService.updateByIdSelective(role);
+        return resultDTO;
     }
     
     /**
@@ -130,9 +133,9 @@ public class RoleController {
 	 */
 	@RequestMapping("/privileges")
 	@ResponseBody
-	public Object privileges(HttpServletRequest request, LoginUser account) {
-		Long roleId = RequestUtil.getLong(request, "id");
-		Role role = roleService.getById(roleId);
+	@ApiOperation(value = "角色权限树", httpMethod = "GET", notes = "角色权限树")
+	public ResultDTO<List<TreeNode>> privileges(Long id, LoginUser account) {
+		Role role = roleService.getById(id);
 		List<Menu> menus = null;
 		if(account.getRoleIds().contains(1L)) {
 			if(role.getId() == 1) {
@@ -151,7 +154,7 @@ public class RoleController {
 			}
 		}
 		
-		List<Menu> roleMenus = roleMenuService.getMenuListByRoleId(roleId);
+		List<Menu> roleMenus = roleMenuService.getMenuListByRoleId(id);
 		HashSet<Long> roleMenuIdSet = Sets.newHashSet();
 		for(Menu m : roleMenus) {
 			roleMenuIdSet.add(m.getId());
@@ -170,9 +173,9 @@ public class RoleController {
 			treeNode.setChkDisabled(chkDisabled);
 			treeList.add(treeNode);
 		}
-		Message.Builder builder = Message.newBuilder();
-		builder.data(treeList);
-		return builder.build();
+		ResultDTO<List<TreeNode>> resultDTO = new ResultDTO<>();
+		resultDTO.setData(treeList);
+		return resultDTO;
 	}
 	/**
 	 * 保存角色对应权限：做差集
@@ -184,10 +187,9 @@ public class RoleController {
 	 */
 	@RequestMapping("/privileges/save")
 	@ResponseBody
-	public Object saveMenu(HttpServletRequest request, LoginUser currentUser) throws ApplicationException
+	@ApiOperation(value = "角色权限保存", httpMethod = "POST", notes = "角色权限保存")
+	public ResultDTO<Void> saveMenu(Long roleId, String menuIds, LoginUser currentUser) throws ApplicationException
 	{
-		Long roleId = RequestUtil.getLong(request, "roleId");
-		String menuIds = RequestUtil.getString(request, "menuIds");
 		if (null == roleId || roleId <= 0)
 		{
 			throw ApplicationException.newInstance(ErrorCode.PARAM_ILLEGAL, "roleId");
@@ -207,7 +209,8 @@ public class RoleController {
 			nowSet.add(Long.valueOf(it.next()));
 		}
 		roleMenuService.saveMenus(roleId, nowSet, currentUser);
-		return Message.newBuilder().build();
+		ResultDTO<Void> resultDTO = new ResultDTO<>();
+		return resultDTO;
 	}
 
 }

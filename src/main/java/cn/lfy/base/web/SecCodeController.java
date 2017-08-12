@@ -19,6 +19,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+
 
 /** 
  * 类名称：SecCodeController
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SecCodeController {
 
 	@RequestMapping("/code")
+	@ApiOperation(value="生成验证码",httpMethod="GET",notes="生成验证码，放入session，并输出验证码图片到输出流")  
 	public void generate(HttpServletRequest request, HttpServletResponse response){
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		String code = drawImg(output);

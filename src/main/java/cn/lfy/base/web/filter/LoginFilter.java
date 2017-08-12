@@ -23,20 +23,19 @@ public class LoginFilter extends OncePerRequestFilter {
 
 		long start = System.currentTimeMillis();
 		String requestUri = request.getRequestURI();
-		
-		if(!LoginVerify(request)) {
+		if(!"/manager/login".equals(requestUri) && !LoginVerify(request)) {
 			String httpAjax=request.getHeader("X-Requested-With");
 			if(httpAjax != null && "XMLHttpRequest".equals(httpAjax)) {
 				String scheme = request.getScheme();
 				String host = request.getServerName();
 				int port =request.getServerPort();
-				String loginUrl = scheme + "://" + host + ":" + port + "/login";
+				String loginUrl = scheme + "://" + host + ":" + port + "/console/login.html";
 				response.setStatus(302);
-				response.getWriter().write("{\"ret\":\"3000\", \"msg\":\"验证会话失败，请先登录\", \"redirectUrl\":\"" + loginUrl + "\"}");
+				response.getWriter().write("{\"code\":\"401\", \"message\":\"验证会话失败，请先登录\", \"redirect\":\"" + loginUrl + "\"}");
 				response.getWriter().flush();
 				response.getWriter().close();
 			} else {
-				response.sendRedirect("/login");
+				response.sendRedirect("/console/login.html");
 			}
 			return;
 		}
@@ -44,7 +43,6 @@ public class LoginFilter extends OncePerRequestFilter {
 		log.info("登录会话拦截，请求URL："+requestUri + " cost " + (System.currentTimeMillis() - start) + "ms");
 	}
 
-	
 	private boolean LoginVerify(HttpServletRequest request){
 		
 		HttpSession session = request.getSession();

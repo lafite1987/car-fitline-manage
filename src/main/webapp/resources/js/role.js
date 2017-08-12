@@ -33,8 +33,8 @@ var roles = {
             	beforeRemove: self.beforeRemove
             }
         };
-        $.post("/manage/role/api/tree", function(result) {
-    		if(result.ret == 0) {
+        $.post("/manager/role/api/tree", function(result) {
+    		if(result.code == 200) {
     			var zNodes = result.data;
     			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
     		}
@@ -99,8 +99,8 @@ var roles = {
 					menuIds += tmpNode.id;
 				}
             }
-            $.get("/manage/role/privileges/save",{roleId:id, menuIds : menuIds},function(result){
-                if (result.ret == 0) {
+            $.get("/manager/role/privileges/save",{roleId:id, menuIds : menuIds},function(result){
+                if (result.code == 200) {
                     $('#privilege').modal('hide');
                     roles.query();
                 } else {
@@ -109,8 +109,8 @@ var roles = {
                 }
             });
         });
-        $.getJSON("/manage/role/privileges", {id: id}, function(result){
-        	if (result.ret == 0) {
+        $.getJSON("/manager/role/privileges", {id: id}, function(result){
+        	if (result.code == 200) {
         		var setting = {
     	            view: {
     	                selectedMulti: false
@@ -147,8 +147,8 @@ var roles = {
         $(".J_sure").unbind('click').click(function () {
         	roles.editConfirmSubmit();
         });
-        $.getJSON("/manage/role/detail", {id: treeNode.id}, function(result){
-        	if (result.ret == 0) {
+        $.getJSON("/manager/role/detail", {id: treeNode.id}, function(result){
+        	if (result.code == 200) {
                 if (result.data.onMenu == 0) {
                 	$('#search_dropDown-status1').attr("value",'0').text("否");
                 } else {
@@ -172,8 +172,8 @@ var roles = {
                 orderNo: $("#orderNo").val(),
                 onMenu:$("#search_dropDown-status1").attr("value")
             };
-            $.post("/manage/role/update", param, function(result){
-                if ( result.ret == 0 ) {
+            $.post("/manager/role/update", param, function(result){
+                if ( result.code == 200 ) {
                     self.loadTree();
                     $(".btn-default").trigger("click");
                 } else {
@@ -187,8 +187,8 @@ var roles = {
     	zTree.selectNode(treeNode);
     	$(".J_delete_sure").unbind('click');
         $(".J_delete_sure").click(function () {
-            $.get("/manage/role/del",{"id":treeNode.id},function(result){
-                if (result.ret == 0) {
+            $.get("/manager/role/del",{"id":treeNode.id},function(result){
+                if (result.code == 200) {
                     $('#myModal').modal('hide');
                     roles.loadTree();
                 } else {
@@ -213,8 +213,8 @@ var roles = {
                 name: $("#name").val(),
                 desc: $("#desc").val(),
             };
-            $.post("/manage/role/add", param, function(result){
-                if ( result.ret == 0 ) {
+            $.post("/manager/role/add", param, function(result){
+                if ( result.code == 200 ) {
                     self.loadTree();
                     $(".btn-default").trigger("click");
                 } else {

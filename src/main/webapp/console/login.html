@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<jsp:include page="common/common_login.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="/resources/css/login.css" />
+<!-- bootstrap & fontawesome -->
+<link rel="stylesheet"
+	href="/resources/ace/assets/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="/resources/ace/assets/css/font-awesome.min.css" />
+
+<!-- text fonts -->
+<link rel="stylesheet" href="/resources/ace/assets/css/ace-fonts.css" />
+
+<!-- ace styles -->
+<link rel="stylesheet" href="/resources/ace/assets/css/ace.min.css" />
+
+<!--[if lte IE 9]>
+    <link rel="stylesheet" href="/resources/ace/assets/css/ace-part2.min.css" />
+<![endif]-->
+<link rel="stylesheet" href="/resources/ace/assets/css/ace-rtl.min.css" />
+
+<!--[if lte IE 9]>
+  <link rel="stylesheet" href="/resources/ace/assets/css/ace-ie.min.css" />
+<![endif]-->
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+<!--[if lt IE 9]>
+<script src="/resources/ace/assets/js/html5shiv.js"></script>
+<script src="/resources/ace/assets/js/respond.js"></script>
+<![endif]-->
+<script src="/resources/js/common/common.js"></script>
+<script type="text/javascript" src="/resources/js/jquery.tips.js"></script>
+</head>
+
+<body class="login-layout">
+	<div class="main-container">
+		<div class="main-content">
+			<div class="row">
+				<div class="col-sm-10 col-sm-offset-1">
+					<div class="login-container">
+						<div class="center">
+							<h1>
+								<i class="ace-icon fa fa-leaf green"></i> <span class="red">LFY</span>
+								<span class="white" id="id-text2">Technology</span>
+							</h1>
+							<h4 class="blue" id="id-company-text">&copy; LFY科技</h4>
+						</div>
+
+						<div class="space-6"></div>
+
+						<div class="position-relative">
+							<form method="post" id="myForm" action="/dologin">
+								<div id="login-box"
+									class="login-box visible widget-box no-border">
+									<div class="widget-body">
+										<div class="widget-main">
+											<h4 class="header blue lighter bigger">
+												<i class="ace-icon fa fa-coffee green"></i> 请输入您的账号信息
+											</h4>
+
+											<div class="space-6"></div>
+
+											<form>
+												<fieldset>
+													<label class="block clearfix"> <span
+														class="block input-icon input-icon-right"> <input
+															type="text" class="form-control" placeholder="用户名"
+															id="username" name="username" value="admin" /> <i
+															class="ace-icon fa fa-user"></i>
+													</span>
+													</label> <label class="block clearfix"> <span
+														class="block input-icon input-icon-right"> <input
+															type="password" class="form-control" placeholder="密码"
+															id="password" name="password" value="admin" /> <i
+															class="ace-icon fa fa-lock"></i>
+													</span>
+													</label> <label class="block clearfix"> <span
+														class="block input-icon input-icon-right"> <input
+															type="password" class="form-control" placeholder="验证码"
+															name="checkcode" /> <span style="cursor: pointer">
+																<img src="/code" onclick="reCheckcode(this)" />
+														</span>
+													</span>
+													</label>
+
+													<div class="space"></div>
+
+													<div class="clearfix">
+														<label class="inline"> <input type="checkbox"
+															class="ace" /> <span class="lbl"> 记住我</span>
+														</label>
+
+														<button type="button"
+															class="width-35 pull-right btn btn-sm btn-primary"
+															onclick="severCheck()">
+															<i class="ace-icon fa fa-key"></i> <span
+																class="bigger-110">登录</span>
+														</button>
+													</div>
+
+													<div class="space-4"></div>
+												</fieldset>
+											</form>
+
+
+											<div class="space-6"></div>
+
+										</div>
+										<!-- /.widget-main -->
+
+										<div class="toolbar clearfix"></div>
+									</div>
+									<!-- /.widget-body -->
+								</div>
+								<!-- /.login-box -->
+								</from>
+						</div>
+						<!-- /.position-relative -->
+
+					</div>
+				</div>
+				<!-- /.col -->
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /.main-content -->
+	</div>
+	<!-- /.main-container -->
+
+	<!-- basic scripts -->
+
+	<!--[if !IE]> -->
+	<script type="text/javascript">
+		window.jQuery
+				|| document
+						.write("<script src='/resources/ace/assets/js/jquery.min.js'>"
+								+ "<"+"/script>");
+	</script>
+
+	<!-- <![endif]-->
+
+	<!--[if IE]>
+<script type="text/javascript">
+ window.jQuery || document.write("<script src='/resources/ace/assets/js/jquery1x.js'>"+"<"+"/script>");
+</script>
+<![endif]-->
+	<script type="text/javascript">
+		if ('ontouchstart' in document.documentElement)
+			document
+					.write("<script src='/resources/assets/js/jquery.mobile.custom.js'>"
+							+ "<"+"/script>");
+	</script>
+
+	<!-- inline scripts related to this page -->
+	<script type="text/javascript">
+		jQuery(function($) {
+			$(document).on('click', '.toolbar a[data-target]', function(e) {
+				e.preventDefault();
+				var target = $(this).data('target');
+				$('.widget-box.visible').removeClass('visible');//hide others
+				$(target).addClass('visible');//show target
+			});
+		});
+
+		//you don't need this, just used for changing background
+		jQuery(function($) {
+			$('#btn-login-dark').on('click', function(e) {
+				$('body').attr('class', 'login-layout');
+				$('#id-text2').attr('class', 'white');
+				$('#id-company-text').attr('class', 'blue');
+
+				e.preventDefault();
+			});
+			$('#btn-login-light').on('click', function(e) {
+				$('body').attr('class', 'login-layout light-login');
+				$('#id-text2').attr('class', 'grey');
+				$('#id-company-text').attr('class', 'blue');
+
+				e.preventDefault();
+			});
+			$('#btn-login-blur').on('click', function(e) {
+				$('body').attr('class', 'login-layout blur-login');
+				$('#id-text2').attr('class', 'white');
+				$('#id-company-text').attr('class', 'light-blue');
+
+				e.preventDefault();
+			});
+
+		});
+	</script>
+
+	<script type="text/javascript" src="/resources/js/jquery.validate.js"></script>
+	<script type="text/javascript"
+		src="/resources/js/jquery.cms.validate.js"></script>
+	<script type="text/javascript" src="/resources/js/common/sha256.min.js"></script>
+
+
+	<script type="text/javascript">
+		$(function() {
+			$("#myForm").cmsvalidate();
+		});
+		function severCheck() {
+			var username = $("#username").val();
+			var password = $("#password").val();
+			password = sha256(password);
+			$.ajax({
+				type : "POST",
+				url : '/manager/login',
+				data : {
+					username : username,
+					password : password
+				},
+				dataType : 'json',
+				cache : false,
+				success : function(result) {
+					if (200 == result.code) {
+						window.location.href = "/console/index.html";
+					} else {
+						$("#password").tips({
+							side : 2,
+							msg : result.message,
+							bg : '#AE81FF',
+							time : 3
+						});
+					}
+				}
+			});
+		}
+	</script>
+	<title>后台管理登录</title>
+	<script type="text/javascript">
+		function reCheckcode(img) {
+			img.src = "code?" + Math.random();
+		}
+	</script>
+</body>
+</html>
