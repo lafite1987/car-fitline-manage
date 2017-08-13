@@ -12,13 +12,14 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * <pre>
- *  +-------+-------+---+-------+
- *	|  size |version|cmd|errCode|
- *	+---------------+---+ ------+
- *	|   4   |   2   | 2 |   2   |
- *	+-------+-------+---+-------+
- * </pre>
- * Encoder Output Client
+ * <br>服务器编码器，编码输出给客户端
+ * 	+-------+-------+---+-------+------+
+ *	|  size |version|cmd|errCode| data |
+ *	+---------------+---+-------+------+
+ *	|   4   |   2   | 2 |   2   |byte[]|
+ *	+-------+-------+---+-------+------+
+ *  <br>size = 4 + 2 + 2 + 2 + data.length;
+ *	</pre>
  * @author Leo.liao
  *
  */

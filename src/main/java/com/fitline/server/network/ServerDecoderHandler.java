@@ -12,11 +12,12 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 /**
  * <pre>
  * <br>客户端直接连接到服务器
- * 	+-------+-------+---+
- *	|  size |version|cmd|
- *	+---------------+---+ 
- *	|   4   |   2   | 2 |
- *	+-------+-------+---+
+ * 	+-------+-------+---+------+
+ *	|  size |version|cmd| data |
+ *	+---------------+---+------+
+ *	|   4   |   2   | 2 |byte[]|
+ *	+-------+-------+---+------+
+ *  <br>size = 4 + 2 + 2 + data.length;
  *	</pre>
  * @author Leo.liao
  *

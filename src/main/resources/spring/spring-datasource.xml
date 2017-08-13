@@ -12,10 +12,10 @@
        http://www.springframework.org/schema/aop     
        http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
-    <context:component-scan base-package="cn.lfy.base,com.family.common" />
+    <context:component-scan base-package="cn.lfy.base,com.fitline" />
 
     <!-- 配置数据源 -->
-    <bean id="dataSource-admin" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <!-- 基本属性 url、user、password -->
         <property name="driverClassName" value="com.mysql.jdbc.Driver"></property> 
         <property name="url" value="${dbUrl}" />
@@ -49,12 +49,12 @@
     </bean>
 
     <!-- myibatis配置，使其支持注解和配置文件形式 -->
-    <bean id="sqlSessionFactory-admin" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource-admin" />
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
         <property name="mapperLocations">
             <array>
-                <value>classpath:com/family/common/dao/mybatis/*.xml</value>
+                <value>classpath:com/fitline/dao/mybatis/*.xml</value>
                 <value>classpath:cn/lfy/base/dao/mybatis/*.xml</value>
             </array>
         </property>
@@ -62,8 +62,8 @@
     
     <!-- 扫描basePackage下所有以@MyBatisRepository标识的 接口-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory-admin"/>
-        <property name="basePackage" value="cn.lfy.base.dao,com.family.common.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="cn.lfy.base.dao,com.fitline.dao" />
     </bean>
 
 </beans>
